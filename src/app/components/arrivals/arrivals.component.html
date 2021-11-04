@@ -1,0 +1,122 @@
+<form #newArrival="ngForm" class="newArrival">
+  <h5>Add new Arrival:</h5>
+  <p
+    *ngIf="newArrival.invalid && newArrival.submitted"
+    class="alert alert-danger"
+  >
+    The form is not valid. Please check all fields!
+  </p>
+  <div>
+    From town:
+    <input
+      type="text"
+      #fromTown="ngModel"
+      ngModel
+      name="from_town"
+      required
+      minlength="1"
+      maxlength="64"
+    />
+    <span
+      class="alert alert-warning"
+      *ngIf="fromTown.invalid && newArrival.submitted"
+      >Not valid</span
+    >
+  </div>
+
+  <div>
+    Airline:
+    <input
+      type="text"
+      #airline="ngModel"
+      ngModel
+      name="airline"
+      required
+      minlength="1"
+      maxlength="32"
+    />
+    <span
+      class="alert alert-warning"
+      *ngIf="airline.invalid && newArrival.submitted"
+      >Not valid</span
+    >
+  </div>
+
+  <div>
+    Arrival time:
+    <input
+      type="datetime-local"
+      [(ngModel)]="today"
+      name="arrival_time"
+      required
+    />
+
+  </div>
+
+  <button type="submit" (click)="addArrival()" class="btn btn-outline-dark action">
+    Add
+  </button>
+</form>
+
+<div class="statistika">
+  <h5>Statistics:</h5>
+  <p>Total arrivals: {{ total_records }}</p>
+  <p>Delayed arrivals: {{ total_is_late }}</p>
+  <p>Arrivals on time: {{ total_records - total_is_late }}</p>
+</div>
+
+<div class="filter">
+  <h5>Filter:</h5>
+  <div>
+    <label>Find arrival by city:</label>
+    <input type="text" (input)="onFilter($event)" class="filter-input" />
+  </div>
+  <div>
+    <button (click)="onSort('from_town')" class="btn btn-outline-secondary action">
+      Sort by Town
+    </button>
+    <button (click)="onSort('arrival_time')" class="btn btn-outline-secondary action">
+      Sort by Arrival time
+    </button>
+  </div>
+</div>
+
+<!-- <p class="alert alert-warning no-changes" *ngIf="updateError">No changes for update!</p> -->
+<table class='table table-hover' *ngIf="filteredArrivals.length > 0; else noArrivalsWarning">
+  <thead class="table-secondary">
+    <tr>
+      <th>ID <i (click)="onSort('id')" class="fa fa-angle-{{this.field === 'id' ? (this.sortAsc ? 'down' : 'up') : 'down'}}"></i></th>
+      <th>From Town <i (click)="onSort('from_town')" class="fa fa-angle-{{this.field === 'from_town' ? (this.sortAsc ? 'down' : 'up') : 'down'}}"></i></th>
+      <th>Airline <i (click)="onSort('airline')" class="fa fa-angle-{{this.field === 'airline' ? (this.sortAsc ? 'down' : 'up') : 'down'}}"></i></th>
+      <th>Arrival Time <i (click)="onSort('arrival_time')" class="fa fa-angle-{{this.field === 'arrival_time' ? (this.sortAsc ? 'down' : 'up') : 'down'}}"></i></th>
+      <th>Is Late <i (click)="onSort('is_late')" class="fa fa-angle-{{this.field === 'is_late' ? (this.sortAsc ? 'down' : 'up') : 'down'}}"></i></th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of filteredArrivals">
+      <td>{{item.id}}</td>
+      <td>{{item.from_town}}</td>
+      <td>{{item.airline}}</td>
+      <td>{{item.arrival_time | time: 'T'}}<br><input type="datetime-local" #dateInput="ngModel" name="arrival_time" id="arrival_time" [(ngModel)]="item.arrival_time"></td>
+      <td>{{item.is_late ? "Late" : "In time"}}<input type="checkbox" #checkInput="ngModel" [(ngModel)]="item.is_late" id="checkbox"/></td>
+      <td>
+        <button (click)="onUpdate(item)" class="btn btn-outline-warning action">Update</button>
+        <button (click)="onDelete(item.id)" class="btn btn-outline-danger action">Delete</button>
+      </td>
+    </tr>
+  </tbody>
+  <tfoot class="table-secondary">
+    <tr>
+      <td>Total arrivals: {{total_records}}</td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td *ngIf="recordsLoaded">Total is late: {{total_is_late}}</td>
+      <td></td>
+    </tr>
+  </tfoot>
+</table>
+<ng-template #noArrivalsWarning>
+  <p *ngIf="dataLoaded" class="alert alert-warning">Sorry, no arrivals - no data!</p>
+</ng-template>
