@@ -83,7 +83,7 @@ export class ArrivalsComponent implements OnInit {
             this.arrivals.push(res);
             this.filteredArrivals = this.arrivals;
             alert(
-              `Plane from ${this.fromTown.value} (${this.airline.value}) successfuly added to DB!`
+              `Arrival from ${this.fromTown.value} (${this.airline.value}) successfuly added to DB!`
             );
             this.getArrivalsSum();
             this.getTotalIsLate();
@@ -97,7 +97,7 @@ export class ArrivalsComponent implements OnInit {
     this._arrivalsService.deleteArrival(id).subscribe(
       (res) => {
         alert(
-          `Plane ${
+          `Arrival ${
             this.arrivals.find((pl) => pl.id == id)?.id
           } successfuly deleted from DB!`
         );
